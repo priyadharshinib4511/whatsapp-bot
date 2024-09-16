@@ -11,7 +11,7 @@ const authToken = '1044c33ededbe2f41a630039a3c60e57';
 const client = twilio(accountSid, authToken);
 
 // Direct Line Token for Microsoft Bot
-const directLineToken = 'QqCmcC1BYAM.KytQ7zWFEDfvG6dFBmb0G-vacA11ws-McRQ7LxT4-MM';  // Use the Direct Line Token you have
+const directLineToken = 'A-oSxjR5Ll4.DXNUlIYP2kLrho6gdqg3f-cC-lHvUafbjPy4PoINaTE';  // Use the Direct Line Token you have
 
 const app = express();
 app.use(bodyParser.urlencoded({ extended: false }));
