@@ -3,18 +3,18 @@ const bodyParser = require('body-parser');
 const fetch = require('node-fetch');
 const twilio = require('twilio');
 
-let conversationId = 'DF4o76r7jwmF8mpcQf25r1-us';
-const directLineToken = 'A-oSxjR5Ll4.DXNUlIYP2kLrho6gdqg3f-cC-lHvUafbjPy4PoINaTE';  // Use the Direct Line Token you have
+let conversationId = 'Cvq1aNhKIFl1VGeNqae2VY-in';
+const directLineToken = 'QqCmcC1BYAM.DW5PbBsQorF2JmQXXJOyrJgskQ56lOYIN1xf2QhA2nI';  // Use the Direct Line Token you have
 const accountSid = 'ACb1bb9c97453b06f952e5051c43d69f5b';
 const authToken = 'aca231c82d9a2c7ca1e93a8849dfea81';
 const client = twilio(accountSid, authToken);
-
 
 const app = express();
 app.use(bodyParser.urlencoded({ extended: false }));
 
 // Start a conversation with the bot using the Direct Line API
 async function startConversation() {
+    console.log("conversation starting")
     const response = await fetch('https://directline.botframework.com/v3/directline/conversations', {
         method: 'POST',
         headers: {
@@ -47,7 +47,7 @@ async function sendMessage(conversationId, messageText) {
 
 // Poll bot responses after sending the message
 async function getBotResponses(conversationId) {
-    console.log("gettting message from the bot converstation id : ", conversationId)
+    console.log("getting message from the bot converstation id : ", conversationId)
     const response = await fetch(`https://directline.botframework.com/v3/directline/conversations/${conversationId}/activities`, {
         method: 'GET',
         headers: {
@@ -70,18 +70,18 @@ async function checkConversationStatus(conversationId, directLineToken) {
         },
         body: JSON.stringify({
             type: 'message',
-            from: { id: 'user1' },
+            from: { id: 'whatsapp_user' },
             text: 'Test message to check conversation status'
         })
     });
 
     if (response.ok) {
         console.log('Conversation is still active.');
-        return false
+        return true
     } else {
         const errorData = await response.json();
         console.error('Conversation is no longer active. Error:', errorData);
-        return true
+        return false
     }
 }
 
@@ -91,15 +91,24 @@ async function checkConversationStatus(conversationId, directLineToken) {
 // Webhook to handle incoming WhatsApp messages via Twilio
 app.post('/whatsapp', async (req, res) => {
     const incomingMessage = req.body.Body;  // Message sent by the user via WhatsApp
-    const userNumber = req.body.From;       // WhatsApp user's number
+    const userNumber = req.body.From;    
+    console.log("sample 3",incomingMessage, userNumber);
+    // WhatsApp user's number
 
     let conversationIdNew = null
 
-    if (checkConversationStatus(conversationId, directLineToken)) {
+    let isConversationActive = await checkConversationStatus(conversationId, directLineToken)
+
+    console.log("conversation active :", isConversationActive)
+
+    if (isConversationActive) {
         conversationIdNew = conversationId
+        console.log("use existing")
     } else {
         conversationIdNew = await startConversation();
+        console.log("use new")
     }
+    console.log("conversation id :", conversationIdNew)
 
     // Send the user's WhatsApp message to the bot
     await sendMessage(conversationIdNew, incomingMessage);
@@ -112,11 +121,17 @@ app.post('/whatsapp', async (req, res) => {
         console.log("botResponse", botResponses);
         if (botResponses.length > 0) {
             let botReply = botResponses[botResponses.length - 1]
+            console.log("botReply intermediate : ", botReply)
             if (botReply?.text) {
+                console.log("botReply condition 1 : ", botReply)
                 botReply = botReply?.text
             } else if (botReply?.attachments) {
-                botReply = botReply?.attachments?.[0]?.content?.body?.[1]?.text
+                // botReply = botReply?.attachments?.[0]?.content?.body?.[1]?.text
+                botReply = JSON.stringify(botReply?.attachments?.[0]?.content?.body)
+                console.log("botReply condition 2 : ", botReply)
+
             } else {
+                console.log("botReply condition 3 : ", botReply)
                 botReply = "No response found"
             }
             // Send the bot's reply back to the user on WhatsApp
