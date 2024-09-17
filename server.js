@@ -62,6 +62,7 @@ async function getBotResponses(conversationId) {
 
 // Webhook to handle incoming WhatsApp messages via Twilio
 app.post('/whatsapp', async (req, res) => {
+    console.log("sample 3",req);
     const incomingMessage = req.body.Body;  // Message sent by the user via WhatsApp
     const userNumber = req.body.From;       // WhatsApp user's number
 
