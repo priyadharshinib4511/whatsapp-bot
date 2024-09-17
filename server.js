@@ -138,7 +138,7 @@ app.post('/whatsapp', async (req, res) => {
             console.log("botReply : ", botReply)
             client.messages.create({
                 from: 'whatsapp:+14155238886', // Twilio sandbox or approved WhatsApp number
-                to: userNumber,                // User's WhatsApp number
+                to: 'whatsapp:+917395971053',                // User's WhatsApp number
                 body: botReply
             }).then(message => console.log(`Message sent with SID: ${message.sid}`));
         }
