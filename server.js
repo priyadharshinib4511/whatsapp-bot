@@ -74,8 +74,9 @@ app.post('/whatsapp', async (req, res) => {
     // Poll for the bot's response
     setTimeout(async () => {
         const activities = await getBotResponses(conversationId);
-        console.log("sample",activities);
+        console.log("sample 1",activities);
         const botResponses = activities.filter(activity => activity.from.id !== 'whatsapp_user'); // Filter out user messages
+        console.log("sample 2",botResponses);
 
         if (botResponses.length > 0) {
             const botReply = botResponses[botResponses.length - 1].text;  // Get the last bot response
