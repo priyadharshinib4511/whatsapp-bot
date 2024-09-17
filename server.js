@@ -6,8 +6,8 @@ const twilio = require('twilio');
 // Twilio credentials
 // const accountSid = 'your_twilio_account_sid';
 // const authToken = 'your_twilio_auth_token';
-const accountSid = 'ACf62d2624419023474faa114a33840e8b';
-const authToken = '10906b4340d31c1a8cdc0df94c086950';
+const accountSid = 'ACb1bb9c97453b06f952e5051c43d69f5b';
+const authToken = 'aca231c82d9a2c7ca1e93a8849dfea81';
 const client = twilio(accountSid, authToken);
 
 // Direct Line Token for Microsoft Bot
@@ -74,6 +74,7 @@ app.post('/whatsapp', async (req, res) => {
     // Poll for the bot's response
     setTimeout(async () => {
         const activities = await getBotResponses(conversationId);
+        console.log("sample",activities);
         const botResponses = activities.filter(activity => activity.from.id !== 'whatsapp_user'); // Filter out user messages
 
         if (botResponses.length > 0) {
@@ -81,7 +82,7 @@ app.post('/whatsapp', async (req, res) => {
 
             // Send the bot's reply back to the user on WhatsApp
             client.messages.create({
-                from: '+14155238886', // Twilio sandbox or approved WhatsApp number
+                from: '+19524795897', // Twilio sandbox or approved WhatsApp number
                 to: userNumber,                // User's WhatsApp number
                 body: botReply
             }).then(message => console.log(`Message sent with SID: ${message.sid}`));
