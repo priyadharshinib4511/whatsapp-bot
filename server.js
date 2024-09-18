@@ -6,7 +6,7 @@ var request = require('request');
 const axios = require('axios');
 
 
-let conversationId = '3R1MpeT1R8YJJyOdJuYPcr-in';
+let conversationId = '1r6jizmmZxN3r2hLX2W9Bp-in';
 const directLineToken = 'QqCmcC1BYAM.DW5PbBsQorF2JmQXXJOyrJgskQ56lOYIN1xf2QhA2nI';  // Use the Direct Line Token you have
 const accountSid = 'ACb1bb9c97453b06f952e5051c43d69f5b';
 const authToken = '20ae11fb1f3d13c9fe98010bffcc81d1';
@@ -38,7 +38,7 @@ async function sendMessage(conversationId, messageText) {
         "locale": "en-EN",
         "type": "message",
         "from": {
-            "id": "user1"
+            "id": "whatsapp_user"
         },
         "text": messageText
     });
@@ -170,7 +170,7 @@ app.post('/whatsapp', async (req, res) => {
                 body: botReply
             }).then(message => console.log(`Message sent with SID: ${message.sid}`));
         }
-    }, 10000); // Poll after 2 seconds to allow bot processing
+    }, 15000); // Poll after 15 seconds to allow bot processing
 
     res.sendStatus(200);  // Respond to Twilio to acknowledge receipt
 });
