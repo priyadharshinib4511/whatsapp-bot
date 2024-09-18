@@ -46,7 +46,7 @@ async function sendMessage(conversationId, messageText) {
     let config = {
         method: 'post',
         maxBodyLength: Infinity,
-        url: 'https://directline.botframework.com//v3/directline/conversations/ApF7uEZFpOpCseuWKEqGLe-in/activities',
+        url: `https://directline.botframework.com//v3/directline/conversations/${conversationId}/activities`,
         headers: {
             'Content-Type': 'application/json',
             'Authorization': 'Bearer QqCmcC1BYAM.DW5PbBsQorF2JmQXXJOyrJgskQ56lOYIN1xf2QhA2nI'
