@@ -2,8 +2,11 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const fetch = require('node-fetch');
 const twilio = require('twilio');
+var request = require('request');
+const axios = require('axios');
 
-let conversationId = '6kqvXLGLVki7GZ6XJcsThA-in';
+
+let conversationId = 'ApF7uEZFpOpCseuWKEqGLe-in';
 const directLineToken = 'QqCmcC1BYAM.DW5PbBsQorF2JmQXXJOyrJgskQ56lOYIN1xf2QhA2nI';  // Use the Direct Line Token you have
 const accountSid = 'ACb1bb9c97453b06f952e5051c43d69f5b';
 const authToken = '20ae11fb1f3d13c9fe98010bffcc81d1';
@@ -27,22 +30,41 @@ app.use(bodyParser.urlencoded({ extended: false }));
 }*/
 
 // Send a message to the bot
+
+
 async function sendMessage(conversationId, messageText) {
-    console.log("sending message to the bot")
-    const response = await fetch(`https://directline.botframework.com/v3/directline/conversations/${conversationId}/activities`, {
-        method: 'POST',
-        headers: {
-            'Authorization': `Bearer ${directLineToken}`,
-            'Content-Type': 'application/json',
+    console.log("sending message to the bot", conversationId)
+    let data = JSON.stringify({
+        "locale": "en-EN",
+        "type": "message",
+        "from": {
+            "id": "user1"
         },
-        body: JSON.stringify({
-            type: 'message',
-            from: { id: 'whatsapp_user' }, // Identifier for the WhatsApp user
-            text: messageText,
-        }),
+        "text": messageText
     });
-    const data = await response.json();
-    return data;
+
+    let config = {
+        method: 'post',
+        maxBodyLength: Infinity,
+        url: 'https://directline.botframework.com//v3/directline/conversations/ApF7uEZFpOpCseuWKEqGLe-in/activities',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer QqCmcC1BYAM.DW5PbBsQorF2JmQXXJOyrJgskQ56lOYIN1xf2QhA2nI'
+        },
+        data: data
+    };
+
+    const value = axios.request(config)
+        .then((response) => {
+            console.log("response from activity", JSON.stringify(response.data));
+            return response.data
+        })
+        .catch((error) => {
+            console.log(error);
+        });
+
+    return value
+
 }
 
 // Poll bot responses after sending the message
@@ -92,7 +114,7 @@ async function checkConversationStatus(conversationId, directLineToken) {
 app.post('/whatsapp', async (req, res) => {
     const incomingMessage = req.body.Body;  // Message sent by the user via WhatsApp
     const userNumber = req.body.From;    
-    console.log("sample 3",incomingMessage, userNumber);
+    console.log("sample 3", incomingMessage, userNumber);
     // WhatsApp user's number
 
     let conversationIdNew = null
@@ -114,14 +136,17 @@ app.post('/whatsapp', async (req, res) => {
     console.log("conversation id new:", conversationIdNew)
 
     // Send the user's WhatsApp message to the bot
-    await sendMessage(conversationIdNew, incomingMessage);
+    const conversationIdDetail = await sendMessage(conversationIdNew, incomingMessage);
+
+    console.log("conversation_detail:", conversationIdDetail?.id)
+
 
     // Poll for the bot's response
     setTimeout(async () => {
         const activities = await getBotResponses(conversationIdNew);
-        console.log("activities", activities);
-        const botResponses = activities.filter(activity => activity.from.id !== 'whatsapp_user'); // Filter out user messages
-        console.log("botResponse", botResponses);
+        // console.log("activities", activities);
+        const botResponses = activities.filter(activity => activity.replyToId === conversationIdDetail?.id); // Filter out user messages
+        console.log("botResponse", botResponses, botResponses.length);
         if (botResponses.length > 0) {
             let botReply = botResponses[botResponses.length - 1]
             console.log("botReply intermediate : ", botReply)
@@ -130,7 +155,7 @@ app.post('/whatsapp', async (req, res) => {
                 botReply = botReply?.text
             } else if (botReply?.attachments) {
                 // botReply = botReply?.attachments?.[0]?.content?.body?.[1]?.text
-                botReply = JSON.stringify(botReply?.attachments?.[0]?.content?.body)
+                botReply = JSON.stringify(botReply?.attachments?.[0]?.content?.body) ? JSON.stringify(botReply?.attachments?.[0]?.content?.body) : "wrong data format"
                 console.log("botReply condition 2 : ", botReply)
 
             } else {
@@ -145,7 +170,7 @@ app.post('/whatsapp', async (req, res) => {
                 body: botReply
             }).then(message => console.log(`Message sent with SID: ${message.sid}`));
         }
-    }, 2000); // Poll after 2 seconds to allow bot processing
+    }, 10000); // Poll after 2 seconds to allow bot processing
 
     res.sendStatus(200);  // Respond to Twilio to acknowledge receipt
 });
