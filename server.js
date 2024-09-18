@@ -3,7 +3,7 @@ const bodyParser = require('body-parser');
 const fetch = require('node-fetch');
 const twilio = require('twilio');
 
-let conversationId = 'Cvq1aNhKIFl1VGeNqae2VY-in';
+let conversationId = '6kqvXLGLVki7GZ6XJcsThA-in';
 const directLineToken = 'QqCmcC1BYAM.DW5PbBsQorF2JmQXXJOyrJgskQ56lOYIN1xf2QhA2nI';  // Use the Direct Line Token you have
 const accountSid = 'ACb1bb9c97453b06f952e5051c43d69f5b';
 const authToken = 'aca231c82d9a2c7ca1e93a8849dfea81';
@@ -13,7 +13,7 @@ const app = express();
 app.use(bodyParser.urlencoded({ extended: false }));
 
 // Start a conversation with the bot using the Direct Line API
-async function startConversation() {
+/*async function startConversation() {
     console.log("conversation starting")
     const response = await fetch('https://directline.botframework.com/v3/directline/conversations', {
         method: 'POST',
@@ -24,7 +24,7 @@ async function startConversation() {
     });
     const data = await response.json();
     return data.conversationId;
-}
+}*/
 
 // Send a message to the bot
 async function sendMessage(conversationId, messageText) {
@@ -97,18 +97,21 @@ app.post('/whatsapp', async (req, res) => {
 
     let conversationIdNew = null
 
-    let isConversationActive = await checkConversationStatus(conversationId, directLineToken)
+    // let isConversationActive = await checkConversationStatus(conversationId, directLineToken)
 
-    console.log("conversation active :", isConversationActive)
+    console.log("conversation active :", conversationId)
 
-    if (isConversationActive) {
-        conversationIdNew = conversationId
-        console.log("use existing")
-    } else {
-        conversationIdNew = await startConversation();
-        console.log("use new")
-    }
-    console.log("conversation id :", conversationIdNew)
+    // if (isConversationActive) {
+    //     conversationIdNew = conversationId
+    //     console.log("use existing")
+    // } else {
+    //     conversationIdNew = await startConversation();
+    //     console.log("use new")
+    // }
+
+    conversationIdNew = conversationId
+
+    console.log("conversation id new:", conversationIdNew)
 
     // Send the user's WhatsApp message to the bot
     await sendMessage(conversationIdNew, incomingMessage);
