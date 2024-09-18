@@ -7,7 +7,7 @@ const axios = require('axios');
 
 
 let conversationId = '1r6jizmmZxN3r2hLX2W9Bp-in';
-const directLineToken = 'QqCmcC1BYAM.DW5PbBsQorF2JmQXXJOyrJgskQ56lOYIN1xf2QhA2nI';  // Use the Direct Line Token you have
+const directLineToken = 'yzZJrsU3OUA.V99G5UCiB9R00kGx2tZaWHFGXCwjQGbr_STSOXIgupI';  // Use the Direct Line Token you have
 const accountSid = 'ACb1bb9c97453b06f952e5051c43d69f5b';
 const authToken = '20ae11fb1f3d13c9fe98010bffcc81d1';
 const client = twilio(accountSid, authToken);
@@ -49,7 +49,7 @@ async function sendMessage(conversationId, messageText) {
         url: `https://directline.botframework.com//v3/directline/conversations/${conversationId}/activities`,
         headers: {
             'Content-Type': 'application/json',
-            'Authorization': 'Bearer QqCmcC1BYAM.DW5PbBsQorF2JmQXXJOyrJgskQ56lOYIN1xf2QhA2nI'
+            'Authorization': `Bearer ${directLineToken}`
         },
         data: data
     };
