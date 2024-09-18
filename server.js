@@ -6,7 +6,7 @@ const twilio = require('twilio');
 let conversationId = '6kqvXLGLVki7GZ6XJcsThA-in';
 const directLineToken = 'QqCmcC1BYAM.DW5PbBsQorF2JmQXXJOyrJgskQ56lOYIN1xf2QhA2nI';  // Use the Direct Line Token you have
 const accountSid = 'ACb1bb9c97453b06f952e5051c43d69f5b';
-const authToken = 'aca231c82d9a2c7ca1e93a8849dfea81';
+const authToken = '20ae11fb1f3d13c9fe98010bffcc81d1';
 const client = twilio(accountSid, authToken);
 
 const app = express();
