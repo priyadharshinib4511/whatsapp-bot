@@ -16,7 +16,7 @@ const app = express();
 app.use(bodyParser.urlencoded({ extended: false }));
 
 // Start a conversation with the bot using the Direct Line API
-/*async function startConversation() {
+async function startConversation() {
     console.log("conversation starting")
     const response = await fetch('https://directline.botframework.com/v3/directline/conversations', {
         method: 'POST',
@@ -27,7 +27,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
     });
     const data = await response.json();
     return data.conversationId;
-}*/
+}
 
 // Send a message to the bot
 
@@ -132,6 +132,8 @@ app.post('/whatsapp', async (req, res) => {
     // }
 
     conversationIdNew = conversationId
+
+    conversationIdNew = await startConversation();
 
     console.log("conversation id new:", conversationIdNew)
 
